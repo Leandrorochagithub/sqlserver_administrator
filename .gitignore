@@ -1,0 +1,31 @@
+# Ambientes Virtuais (Poetry, venv, etc.)
+# Virtual Environments (Poetry, venv, etc.)
+.venv
+venv/
+.env
+/env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ficheiros de cache do VSCode
+# VSCode cache files
+.vscode/
+
+# Ficheiros de sistema do SO
+# OS system files
+.DS_Store
+Thumbs.db
+
+# Ficheiros de backup de API (se decidir não os partilhar)
+# API backup files (if you decide not to share them)
+# 1_data_engineering/2_main_etl/api_responses/
+
+# Ficheiro de configuração
+# Configuration file
+# IMPORTANTE: Se o seu config.py contivesse senhas reais, você adicionaria 'config.py' aqui.
+# Como ele contém apenas nomes de servidores locais, é seguro partilhá-lo.
+# IMPORTANT: If your config.py contained real passwords, you would add 'config.py' here.
+# Since it only contains local server names, it's safe to share.
+1_data_engineering/1_schema/config.py

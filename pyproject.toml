@@ -1,0 +1,29 @@
+# Este é o arquivo de configuração principal para um projeto Python que usa Poetry.
+# This is the main configuration file for a Python project that uses Poetry.
+
+[tool.poetry]
+# Informações básicas sobre o seu projeto.
+# Basic information about your project.
+name = "sqlserver_admin_portfolio"
+version = "0.1.0"
+description = "Um pipeline de ETL para extrair dados de criptomoedas e carregá-los no SQL Server."
+authors = ["Leandro da Rocha"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+# A versão do Python que o seu projeto usa.
+# The Python version your project uses.
+python = "^3.10"
+
+# As bibliotecas que o seu projeto precisa para funcionar.
+# The libraries your project needs to run.
+requests = "^2.31.0"  # Para fazer chamadas à API / For making API calls
+pyodbc = "^5.1.0"    # O driver para conectar ao SQL Server / The driver to connect to SQL Server
+
+
+[build-system]
+# Esta seção é padrão e necessária para o Poetry funcionar corretamente.
+# This section is standard and required for Poetry to work correctly.
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
