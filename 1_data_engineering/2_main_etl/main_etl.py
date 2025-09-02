@@ -14,14 +14,15 @@ config_dir_path = os.path.join(parent_dir, '1_schema')
 sys.path.append(config_dir_path)
 
 # Importa TODAS as configurações do arquivo config.py
-from config import SERVER_NAME, DATABASE_NAME, API_RESPONSES_FOLDER, COINS_TO_TRACK, DAYS_TO_FETCH
+from config import SERVER_NAME, DATABASE_NAME, API_RESPONSES_FOLDER, COINS_TO_TRACK, DAYS_TO_FETCH, USER_NAME, USER_PASSWORD
 
 # --- CONFIGURAÇÃO DA CONEXÃO ---
 CONNECTION_STRING = (
     f"DRIVER={{ODBC Driver 17 for SQL Server}};"
     f"SERVER={SERVER_NAME};"
-    f"DATABASE={DATABASE_NAME};"
-    f"Trusted_Connection=yes;"
+    f"DATABASE=master;"
+    f"UID={USER_NAME};"
+    f"PWD={USER_PASSWORD};"
 )
 
 # --- FUNÇÕES DO BANCO DE DADOS ---

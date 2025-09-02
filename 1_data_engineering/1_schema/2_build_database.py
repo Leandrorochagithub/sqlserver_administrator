@@ -1,6 +1,6 @@
 import pyodbc # to connect with sql server
 import os # to manipulate folders
-from config import SERVER_NAME, DATABASE_NAME # importation from config file
+from config import SERVER_NAME, DATABASE_NAME, USER_NAME, USER_PASSWORD # importation from config file
 
 # --- CONNECTION CINFIGURATION ---
 SCHEMA_FILE = '1_schema.sql' 
@@ -15,7 +15,8 @@ master_conn_str = (
     f"DRIVER={{ODBC Driver 17 for SQL Server}};"
     f"SERVER={SERVER_NAME};"
     f"DATABASE=master;"
-    f"Trusted_Connection=yes;"
+    f"UID={USER_NAME};"
+    f"PWD={USER_PASSWORD};"
 )
 
 # Connection string for our 'CryptoDB' database
@@ -23,7 +24,8 @@ db_conn_str = (
     f"DRIVER={{ODBC Driver 17 for SQL Server}};"
     f"SERVER={SERVER_NAME};"
     f"DATABASE={DATABASE_NAME};"
-    f"Trusted_Connection=yes;"
+    f"UID={USER_NAME};"  
+    f"PWD={USER_PASSWORD};" 
 )
 
 def build_database():
