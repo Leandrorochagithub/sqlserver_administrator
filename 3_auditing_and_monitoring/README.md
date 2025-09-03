@@ -20,7 +20,8 @@ O script `auditoria_logins_falhos.sql` executa os seguintes passos:
 Abaixo está um exemplo do relatório gerado pelo script após a simulação de algumas tentativas de login incorretas. O resultado permite identificar rapidamente um possível ataque de força bruta ao usuário `app_etl_crypto` vindo de um IP local.
 
 
-<img width="1566" height="211" alt="audit_result" src="https://github.com/user-attachments/assets/8dbb1ba2-43fd-4c80-a647-46540566dbe6" />
+<img width="1800" height="259" alt="audit_result" src="https://github.com/user-attachments/assets/9fba9386-9d34-40ca-bd55-d1f1d91bc358" />
+
 
 ## ✨ Habilidades Demonstradas
 
