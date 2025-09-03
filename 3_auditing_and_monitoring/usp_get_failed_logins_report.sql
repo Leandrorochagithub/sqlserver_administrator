@@ -1,85 +1,105 @@
--- ================================================
--- Script: Coletar tentativas de login com falha
--- no SQL Server nos últimos 7 dias
--- ================================================
+-- =============================================================================
+-- Stored Procedure: dbo.usp_GetFailedLoginsReport
+-- Autor:            Leandro Ferreira
+-- Data de Criação:  2025-09-03
+-- Descrição:        Coleta e sumariza as tentativas de login com falha
+--                   em um determinado período de dias.
+--
+-- BOA PRÁTICA:      Este script garante que a procedure seja criada em um
+--                   banco de dados dedicado para ferramentas de DBA.
+-- ==============================================================================
 
--- Variáveis de controle
-DECLARE @ErrorLogCount INT;      -- Número do arquivo de log a ser lido
-DECLARE @LastLogDate DATETIME;   -- Data mais recente encontrada no log
 
--- Tabela para armazenar o conteúdo dos logs de erro lidos
-DECLARE @ErrorLogInfo TABLE
-(
-    LogDate DATETIME,           -- Data e hora do evento
-    ProcessInfo NVARCHAR(50),   -- Tipo do processo (ex: Logon, Backup, etc.)
-    [Text] NVARCHAR(MAX)        -- Mensagem completa do log
-);
+USE master;
+GO
 
--- Tabela para armazenar a lista de arquivos de log existentes
-DECLARE @EnumErrorLogs TABLE
-(
-    [Archive#] INT,             -- Número do arquivo de log (0 = atual)
-    [Date] DATETIME,             -- Data da criação/modificação do log
-    LogFileSizeMB INT            -- Tamanho do arquivo em MB
-);
-
--- Passo 1: Obter a lista de todos os arquivos de log disponíveis
-INSERT INTO @EnumErrorLogs
-EXEC sp_enumerrorlogs;
-
--- Passo 2: Começar pelo arquivo mais antigo
-SELECT @ErrorLogCount = MIN([Archive#]),
-       @LastLogDate = MAX([Date])
-FROM @EnumErrorLogs;
-
--- Passo 3: Loop para percorrer cada log até o mais recente
-WHILE @ErrorLogCount IS NOT NULL
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'DBA_Admin')
 BEGIN
-    -- Inserir no @ErrorLogInfo apenas registros que contenham "Login" e "failed"
-    -- Isso já filtra no momento da leitura para evitar excesso de dados
-    INSERT INTO @ErrorLogInfo
-    EXEC sp_readerrorlog @ErrorLogCount, 1, 'Login', 'failed';
+    CREATE DATABASE [DBA_Admin];
+    PRINT 'Banco de dados [DBA_Admin] criado para ferramentas de administração.';
+END
+GO
 
-    -- Avança para o próximo arquivo de log que esteja dentro dos últimos 7 dias
-    SELECT @ErrorLogCount = MIN([Archive#]),
-           @LastLogDate = MAX([Date])
-    FROM @EnumErrorLogs
-    WHERE [Archive#] > @ErrorLogCount
-      AND [Date] >= DATEADD(DAY, -7, GETDATE());
-END;
 
--- Passo 4: Consulta para extrair o usuário e o IP
--- Esta consulta transforma a coluna [Text] em informações mais detalhadas
-WITH FailedLogins AS (
+USE [DBA_Admin];
+GO
+
+
+CREATE OR ALTER PROCEDURE dbo.usp_GetFailedLoginsReport
+    @Days INT = 7
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ErrorLogCount INT;
+    DECLARE @LastLogDate DATETIME;
+    DECLARE @StartDate DATETIME = DATEADD(DAY, -@Days, GETDATE());
+
+    DECLARE @ErrorLogInfo TABLE
+    (
+        LogDate DATETIME,
+        ProcessInfo NVARCHAR(50),
+        [Text] NVARCHAR(MAX)
+    );
+
+    DECLARE @EnumErrorLogs TABLE
+    (
+        [Archive#] INT,
+        [Date] DATETIME,
+        LogFileSizeMB INT
+    );
+
+    INSERT INTO @EnumErrorLogs
+    EXEC sp_enumerrorlogs;
+
+    SELECT @ErrorLogCount = MIN([Archive#])
+    FROM @EnumErrorLogs;
+
+    WHILE @ErrorLogCount IS NOT NULL
+    BEGIN
+        INSERT INTO @ErrorLogInfo
+        EXEC sp_readerrorlog @ErrorLogCount, 1, 'Login', 'failed';
+
+        SELECT @ErrorLogCount = MIN([Archive#])
+        FROM @EnumErrorLogs
+        WHERE [Archive#] > @ErrorLogCount
+          AND [Date] >= @StartDate;
+    END;
+
+    WITH FailedLogins AS (
+        SELECT 
+            LogDate,
+            [Text],
+            SUBSTRING(
+                [Text], 
+                CHARINDEX('''', [Text]) + 1, 
+                CHARINDEX('''', [Text], CHARINDEX('''', [Text]) + 1) - CHARINDEX('''', [Text]) - 1
+            ) AS LoginName,
+            CASE 
+                WHEN CHARINDEX('[CLIENT: ', [Text]) > 0 THEN
+                    SUBSTRING(
+                        [Text], 
+                        CHARINDEX('[CLIENT: ', [Text]) + 8, 
+                        CHARINDEX(']', [Text], CHARINDEX('[CLIENT: ', [Text])) - CHARINDEX('[CLIENT: ', [Text]) - 8
+                    )
+                ELSE 'N/A'
+            END AS ClientIP
+        FROM @ErrorLogInfo
+        WHERE LogDate >= @StartDate
+    )
     SELECT 
-        LogDate,
-        [Text],
-        -- Extrai o nome do usuário da mensagem de erro
-        SUBSTRING(
-            [Text], 
-            CHARINDEX('''', [Text]) + 1, 
-            CHARINDEX('''', [Text], CHARINDEX('''', [Text]) + 1) - CHARINDEX('''', [Text]) - 1
-        ) AS LoginName,
-        -- Extrai o endereço de IP do cliente, se disponível
-        CASE 
-            WHEN CHARINDEX('[CLIENT: ', [Text]) > 0 THEN
-                SUBSTRING(
-                    [Text], 
-                    CHARINDEX('[CLIENT: ', [Text]) + 8, 
-                    CHARINDEX(']', [Text], CHARINDEX('[CLIENT: ', [Text])) - CHARINDEX('[CLIENT: ', [Text]) - 8
-                )
-            ELSE 'N/A'
-        END AS ClientIP
-    FROM @ErrorLogInfo
-    WHERE LogDate >= DATEADD(DAY, -7, GETDATE())
-)
-SELECT 
-    COUNT(*) AS NumberOfAttempts,
-    LoginName,
-    ClientIP,
-    MIN(LogDate) AS FirstAttempt,
-    MAX(LogDate) AS LastAttempt,
-    MIN([Text]) AS SampleErrorDetails 
-FROM FailedLogins
-GROUP BY LoginName, ClientIP
-ORDER BY NumberOfAttempts DESC;
+        COUNT(*) AS NumberOfAttempts,
+        LoginName,
+        ClientIP,
+        MIN(LogDate) AS FirstAttempt,
+        MAX(LogDate) AS LastAttempt,
+        MIN([Text]) AS SampleErrorDetails 
+    FROM FailedLogins
+    GROUP BY LoginName, ClientIP
+    ORDER BY NumberOfAttempts DESC;
+
+END
+GO
+
+PRINT 'Procedure [usp_GetFailedLoginsReport] criada/atualizada com sucesso no banco de dados [DBA_Admin].';
+GO
