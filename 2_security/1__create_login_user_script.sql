@@ -48,3 +48,36 @@ DENY DELETE ON dbo.coins TO app_etl_crypto;
 GO
 
 PRINT 'Modelo de segurança para o projeto Crypto atualizado com sucesso.';
+
+-- 03/09/2025
+
+USE master
+GO
+
+PRINT 'Criando login...'
+IF NOT EXISTS (SELECT 1 FROM sys.sql_logins WHERE NAME = 'usr_crypto_ro')
+BEGIN
+	CREATE LOGIN usr_crypto_ro WITH PASSWORD = 'P@ssw0rd'
+END
+GO
+PRINT 'Login criado !'
+
+
+IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE NAME = 'usr_crypto_ro')
+BEGIN
+	CREATE USER usr_crypto_ro FOR LOGIN usr_crypto_ro 
+END
+GO
+PRINT 'Usuário usr_crypto_ro atribuído ao login usr_crypto_ro !'
+
+USE CryptoDB
+GO
+
+
+PRINT 'Concedendo permissões de LEITURA para o usuário usr_crypto_ro...';
+GRANT SELECT ON dbo.coins TO usr_crypto_ro;
+PRINT '- Permissão SELECT concedida em dbo.coins.';
+
+
+GRANT SELECT ON dbo.price_history TO usr_crypto_ro;
+PRINT '- Permissão SELECT concedida em dbo.price_history.';
