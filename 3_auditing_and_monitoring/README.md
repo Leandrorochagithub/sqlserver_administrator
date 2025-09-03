@@ -6,9 +6,9 @@ Um dos pilares da segurança de um banco de dados é o monitoramento proativo de
 
 Este script foi desenvolvido para auditar o log de erros do SQL Server e gerar um relatório consolidado das tentativas de login que falharam nos últimos 7 dias, identificando **qual usuário**, **de qual endereço IP** e **quantas vezes** a tentativa ocorreu.
 
-## 🛠️ A Ferramenta: `auditoria_logins_falhos.sql`
+## 🛠️ A Ferramenta: `usp_get_failed_logins_report.sql`
 
-O script `auditoria_logins_falhos.sql` executa os seguintes passos:
+O script `usp_get_failed_logins_report.sql` executa os seguintes passos:
 
 1.  **Enumera os Logs:** Identifica todos os arquivos de log de erro disponíveis no servidor.
 2.  **Leitura Eficiente:** Percorre cada arquivo de log, pré-filtrando as entradas para ler apenas as que contêm as palavras-chave "Login" e "failed", otimizando a performance.
@@ -17,7 +17,7 @@ O script `auditoria_logins_falhos.sql` executa os seguintes passos:
 
 ## 📊 Resultado da Simulação
 
-Abaixo está um exemplo do relatório gerado pelo script após a simulação de algumas tentativas de login incorretas. O resultado permite identificar rapidamente um possível ataque de força bruta ao usuário `app_etl_crypto` vindo de um IP local.
+Abaixo está um exemplo do relatório gerado pelo script após a simulação de algumas tentativas de login incorretas. O resultado permite identificar rapidamente um possível ataque de força bruta vindo de um IP local.
 
 
 <img width="1800" height="259" alt="audit_result" src="https://github.com/user-attachments/assets/9fba9386-9d34-40ca-bd55-d1f1d91bc358" />
