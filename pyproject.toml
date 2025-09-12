@@ -20,6 +20,8 @@ python = "^3.10"
 # The libraries your project needs to run.
 requests = "^2.31.0"  # Para fazer chamadas à API / For making API calls
 pyodbc = "^5.1.0"    # O driver para conectar ao SQL Server / The driver to connect to SQL Server
+mage-ai = "^0.9.77"
+schedule = "^1.2.2"
 
 
 [build-system]

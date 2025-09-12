@@ -4,7 +4,7 @@ import sys
 
 script_dir = os.path.dirname(__file__)
 parent_dir = os.path.dirname(script_dir)
-config_dir_path = os.path.join(parent_dir, '1_schema')
+config_dir_path = os.path.join(parent_dir, 'schema')
 sys.path.append(config_dir_path)
 
 try:

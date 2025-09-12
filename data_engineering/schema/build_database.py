@@ -3,12 +3,12 @@ import os # to manipulate folders
 from config import SERVER_NAME, DATABASE_NAME, USER_NAME, USER_PASSWORD # importation from config file
 
 # --- CONNECTION CINFIGURATION ---
-SCHEMA_FILE = '1_schema.sql' 
+SCHEMA_FILE = 'schema.sql' 
 
 # --- PATH LOGIC FOR IMPORTS ---
 script_dir = os.path.dirname(__file__) # Add the '2_schema' folder to the Python path
 parent_dir = os.path.dirname(script_dir) # so it can find the config.py file
-config_dir_path = os.path.join(parent_dir, '2_schema') # Mounts the path to the folder where config.py is
+config_dir_path = os.path.join(parent_dir, 'schema') # Mounts the path to the folder where config.py is
 sys.path.append(config_dir_path)
 
 master_conn_str = (

@@ -2,59 +2,70 @@ import requests
 import pyodbc
 import json
 import os
-import sys
 from datetime import datetime
 import time
+import sys
 
 # --- LÓGICA DE CAMINHOS PARA IMPORTS ---
-# Adiciona a pasta '1_schema' ao caminho do Python para que ele possa encontrar o config.py
+# Adiciona a pasta 'schema' ao caminho do Python
+# para que ele possa encontrar o arquivo config.py
 script_dir = os.path.dirname(__file__)
 parent_dir = os.path.dirname(script_dir)
-config_dir_path = os.path.join(parent_dir, '1_schema')
+config_dir_path = os.path.join(parent_dir, 'schema')
 sys.path.append(config_dir_path)
 
-# Importa TODAS as configurações do arquivo config.py
-from config import SERVER_NAME, DATABASE_NAME, API_RESPONSES_FOLDER, COINS_TO_TRACK, DAYS_TO_FETCH, USER_NAME, USER_PASSWORD
+from config import SERVER_NAME, DATABASE_NAME, USER_NAME, USER_PASSWORD, COINS_TO_TRACK, API_RESPONSES_FOLDER
 
 # --- CONFIGURAÇÃO DA CONEXÃO ---
 CONNECTION_STRING = (
     f"DRIVER={{ODBC Driver 17 for SQL Server}};"
     f"SERVER={SERVER_NAME};"
-    f"DATABASE=master;"
+    f"DATABASE={DATABASE_NAME};"
     f"UID={USER_NAME};"
     f"PWD={USER_PASSWORD};"
 )
 
 # --- FUNÇÕES DO BANCO DE DADOS ---
-# (As funções do banco de dados continuam as mesmas)
 def insert_coin_data(conn, coin_id, symbol, name):
+    """Insere os dados de uma moeda na tabela 'dbo.coins'."""
     cursor = conn.cursor()
+    # SQL Server usa 'MERGE' para fazer um "INSERT se não existir"
+    # Usamos o nome explícito 'dbo.coins' para remover ambiguidade.
     merge_sql = """
-    MERGE INTO coins AS target
+    MERGE INTO dbo.coins AS target
     USING (VALUES (?, ?, ?)) AS source (id, symbol, name)
     ON (target.id = source.id)
     WHEN NOT MATCHED THEN
         INSERT (id, symbol, name) VALUES (source.id, source.symbol, source.name);
     """
     cursor.execute(merge_sql, coin_id, symbol, name)
-    print(f"Moeda '{name}' verificada/inserida na tabela 'coins'.")
+    print(f"Moeda '{name}' verificada/inserida na tabela 'dbo.coins'.")
 
 def insert_price_history(conn, coin_id, records_to_insert):
+    """Insere uma lista de registros históricos de preço no banco."""
     cursor = conn.cursor()
-    sql = "INSERT INTO price_history (coin_id, price_date, price_usd, market_cap_usd, volume_usd) VALUES (?, ?, ?, ?, ?)"
+    # Usamos o nome explícito 'dbo.price_history' para remover ambiguidade.
+    sql = "INSERT INTO dbo.price_history (coin_id, price_date, price_usd, market_cap_usd, volume_usd) VALUES (?, ?, ?, ?, ?)"
     cursor.executemany(sql, records_to_insert)
     print(f"Inseridos {len(records_to_insert)} registros históricos para {coin_id}.")
 
 def get_total_records_count(conn):
+    """
+    Executa uma consulta para contar o número total de registros na tabela
+    dbo.price_history e imprime o resultado.
+    """
     cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM price_history;")
+    # Usamos o nome explícito 'dbo.price_history' para remover ambiguidade.
+    cursor.execute("SELECT COUNT(*) FROM dbo.price_history;")
     total_records = cursor.fetchone()[0]
     print(f"\n--- Verificação Final ---")
-    print(f"Total de registros na tabela 'price_history': {total_records}")
-
+    print(f"Total de registros na tabela 'dbo.price_history': {total_records}")
 
 # --- FUNÇÕES DA API E TRANSFORMAÇÃO ---
-def fetch_and_save_coin_history(coin_id, days):
+def fetch_and_save_coin_history(coin_id, days=7):
+    """
+    Busca o histórico de mercado de uma moeda na API da CoinGecko e salva em um arquivo JSON.
+    """
     url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days={days}"
     try:
         response = requests.get(url)
@@ -62,6 +73,7 @@ def fetch_and_save_coin_history(coin_id, days):
         data = response.json()
         print(f"Dados para '{coin_id}' extraídos com sucesso da API.")
 
+        script_dir = os.path.dirname(__file__)
         backup_folder_path = os.path.join(script_dir, API_RESPONSES_FOLDER)
         if not os.path.exists(backup_folder_path):
             os.makedirs(backup_folder_path)
@@ -78,6 +90,7 @@ def fetch_and_save_coin_history(coin_id, days):
         return None
 
 def transform_data_for_db(coin_id, api_data):
+    """Transforma os dados brutos da API em um formato pronto para o banco de dados."""
     prices = api_data.get('prices', [])
     market_caps = api_data.get('market_caps', [])
     volumes = api_data.get('total_volumes', [])
@@ -89,6 +102,7 @@ def transform_data_for_db(coin_id, api_data):
     records_to_insert = []
     for i in range(len(prices)):
         timestamp = prices[i][0] / 1000
+        # pyodbc pode lidar com objetos datetime diretamente, o que é mais robusto.
         price_date_obj = datetime.fromtimestamp(timestamp)
         price_usd = prices[i][1]
         market_cap_usd = market_caps[i][1]
@@ -100,6 +114,7 @@ def transform_data_for_db(coin_id, api_data):
 
 # --- FLUXO PRINCIPAL (MAIN) ---
 def main():
+    """Orquestra o processo completo de ETL."""
     print("Iniciando o processo de ETL para SQL Server...")
     conn = None
     try:
@@ -111,7 +126,7 @@ def main():
             
             insert_coin_data(conn, coin_id, coin_info['symbol'], coin_info['name'])
             
-            historical_data = fetch_and_save_coin_history(coin_id, days=DAYS_TO_FETCH)
+            historical_data = fetch_and_save_coin_history(coin_id, days=90)
             
             if historical_data:
                 transformed_records = transform_data_for_db(coin_id, historical_data)
