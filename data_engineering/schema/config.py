@@ -37,3 +37,16 @@ COINS_TO_TRACK = {
     'algorand': {'symbol': 'algo', 'name': 'Algorand'},
     'tezos': {'symbol': 'xtz', 'name': 'Tezos'}
 }
+
+# \--- EMAIL ALERT CONFIGURATION ---
+# IMPORTANTE: Preencha com as suas informações. / IMPORTANT: Fill with your information.
+# Se usar o Gmail, você precisará de gerar uma "Senha de App". Veja a nota abaixo.
+# If using Gmail, you will need to generate an "App Password." See the note below.
+
+EMAIL_CONFIG = {
+    "SMTP_SERVER": "smtp.gmail.com",
+    "SMTP_PORT": 587,
+    "SENDER_EMAIL": "leandrodarochaferreira@gmail.com",
+    "SENDER_PASSWORD": "awum ngap exlm crug",
+    "RECIPIENT_EMAIL": "leandrodarochaferreira@gmail.com"
+}

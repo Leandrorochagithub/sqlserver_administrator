@@ -5,6 +5,9 @@ import os
 from datetime import datetime
 import time
 import sys
+import smtplib
+from email.message import EmailMessage
+import traceback
 
 # --- LÓGICA DE CAMINHOS PARA IMPORTS ---
 # Adiciona a pasta 'schema' ao caminho do Python
@@ -14,7 +17,7 @@ parent_dir = os.path.dirname(script_dir)
 config_dir_path = os.path.join(parent_dir, 'schema')
 sys.path.append(config_dir_path)
 
-from config import SERVER_NAME, DATABASE_NAME, USER_NAME, USER_PASSWORD, COINS_TO_TRACK, API_RESPONSES_FOLDER
+from config import SERVER_NAME, DATABASE_NAME, USER_NAME, USER_PASSWORD, COINS_TO_TRACK, API_RESPONSES_FOLDER, EMAIL_CONFIG
 
 # --- CONFIGURAÇÃO DA CONEXÃO ---
 CONNECTION_STRING = (
@@ -24,6 +27,25 @@ CONNECTION_STRING = (
     f"UID={USER_NAME};"
     f"PWD={USER_PASSWORD};"
 )
+
+# --- FUNÇÃO DE ALERTA POR E-MAIL ---
+
+def send_failure_email(error_traceback):
+    """Envia um e-mail de alerta em caso de falha no ETL."""
+    msg = EmailMessage()
+    msg.set_content(f"""Olá,\nO pipeline de ETL de Criptomoedas falhou em {datetime.now()}.Detalhes do erro:\n\--------------------\n{error_traceback}""")
+    msg['From'] = EMAIL_CONFIG["SENDER_EMAIL"]
+    msg['To'] = EMAIL_CONFIG["RECIPIENT_EMAIL"]
+    msg['Subject'] = '[ALERTA] Falha no Pipeline de ETL de Criptomoedas'
+    try:
+        print("Tentando enviar e-mail de alerta...")
+        with smtplib.SMTP(EMAIL_CONFIG["SMTP_SERVER"], EMAIL_CONFIG["SMTP_PORT"]) as server:
+            server.starttls()
+            server.login(EMAIL_CONFIG["SENDER_EMAIL"], EMAIL_CONFIG["SENDER_PASSWORD"])
+            server.send_message(msg)
+            print("E-mail de alerta enviado com sucesso.")
+    except Exception as e:
+            print(f"Falha ao enviar o e-mail de alerta: {e}")
 
 # --- FUNÇÕES DO BANCO DE DADOS ---
 def insert_coin_data(conn, coin_id, symbol, name):
@@ -68,7 +90,7 @@ def fetch_and_save_coin_history(coin_id, days=7):
     """
     url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days={days}"
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=30)
         response.raise_for_status()
         data = response.json()
         print(f"Dados para '{coin_id}' extraídos com sucesso da API.")
@@ -118,6 +140,8 @@ def main():
     print("Iniciando o processo de ETL para SQL Server...")
     conn = None
     try:
+        # Linha de teste de envio de e-mail em casa de falha no etl.
+        # raise ValueError("Este é um erro de teste para o alerta de e-mail.")
         conn = pyodbc.connect(CONNECTION_STRING)
         print(f"Conectado ao banco de dados: '{DATABASE_NAME}' no servidor '{SERVER_NAME}'")
 
@@ -140,15 +164,18 @@ def main():
         get_total_records_count(conn)
         conn.commit()
 
-    except pyodbc.Error as e:
-        print(f"Ocorreu um erro no banco de dados: {e}")
-    finally:
+    except Exception as e:
+        print("\n!!!!!!!!!! OCORREU UMA FALHA NO PROCESSO DE ETL !!!!!!!!!!")
+        error_details = traceback.format_exc()
+        print(error_details)
+        send_failure_email(error_details)
         if conn:
+            conn.rollback()
+    finally:
+        if 'conn' in locals() and conn:
             conn.close()
             print("\nConexão com o banco de dados fechada.")
-    
-    print("Processo de ETL concluído.")
-
+            print("Fim da execução do script.")
 
 if __name__ == "__main__":
     main()
