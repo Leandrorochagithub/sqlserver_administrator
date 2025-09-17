@@ -28,4 +28,4 @@ Thumbs.db
 # Como ele contém apenas nomes de servidores locais, é seguro partilhá-lo.
 # IMPORTANT: If your config.py contained real passwords, you would add 'config.py' here.
 # Since it only contains local server names, it's safe to share.
-1_data_engineering/1_schema/config.py
+data_engineering/schema/config.py
