@@ -1,9 +1,13 @@
 # Portfólio de Administração de Banco de Dados SQL Server
 
 Este repositório contém uma coleção de scripts e análises que demonstram as competências essenciais de um Administrador de Banco de Dados (DBA). O objetivo é aplicar os princípios de segurança, backup, manutenção e otimização de performance em um banco de dados de projeto.
-Estrutura do Projeto.
+Estrutura do Projeto. O processo vai da extração dos dados de uma api pública, criação do Banco de Dados, sua alimentação, criação de Dashboard de Cryptos e Criação de Dasboard de manutenção do Banco de Dados. 
 
-# ETL: Processo de carga de dados da API Coingecko:
+* Engenharia de Dados
+* Adminstração de Bando de Dados Sql Server
+* Análise de Dados
+
+# ETAPA 01: ETL - Processo de carga de dados da API Coingecko
 
 **1. config.py: Configurações de ambiente e conexões:**
 
@@ -41,9 +45,9 @@ Estrutura do Projeto.
 
 # Banco de Dados: Sql Server
 
-## Está dividido em quatro áreas principais de responsabilidade de um DBA:
+## Está dividido em quatro áreas principais de responsabilidade de um DBA
 
-**Segurança: Scripts para a criação de um modelo de segurança robusto, aplicando o princípio do menor privilégio.**
+**Segurança: Scripts para a criação de um modelo de segurança robusto, aplicando o princípio do menor privilégio**
 
 **1. create_login_user_script.sql: Criação de Login (Nível instância) e Usuário (Nível Banco)**
 
@@ -54,11 +58,11 @@ Estrutura do Projeto.
 
 **1.1. usp_get_failed_logins_report.sql: Stored Procedure para auditar tentativas mal sucedidas de login**
 
-<img width="1137" height="962" alt="audit login" src="https://github.com/user-attachments/assets/d1913982-4e5d-474c-9e04-5e67861fc27c" />
-<img width="1137" height="872" alt="audit login_02" src="https://github.com/user-attachments/assets/e34f1d00-21ae-4f4b-9687-d299b7ae1f78" />
+<img width="1135" height="920" alt="audit login01" src="https://github.com/user-attachments/assets/a7d30cc3-bdd1-4faf-8bf1-fddd7ade284a" />
+<img width="1137" height="932" alt="audit login02" src="https://github.com/user-attachments/assets/a5371824-bfbd-4c23-af50-b6d9d198e928" />
+<img width="1800" height="259" alt="audit_result" src="https://github.com/user-attachments/assets/6c71d3ea-411c-45da-bbe2-2193721642cf" />
 
-
-**1.2. Automação de execução do main_etl usando Task Schedule do Windows:**
+**1.2. Automação de execução do main_etl usando Task Schedule do Windows**
 
 <img width="1790" height="1014" alt="task_schedule_01" src="https://github.com/user-attachments/assets/74655a26-d9a8-451b-909b-e86031cebe98" />
 <img width="1381" height="617" alt="task_schedule_02" src="https://github.com/user-attachments/assets/2ca2e92d-c185-4c33-a939-4366c96785c2" />
@@ -78,15 +82,19 @@ Estrutura do Projeto.
 
 # Tecnologias
 
-Microsoft SQL Server
+* Microsoft SQL Server
 
-Transact-SQL (T-SQL)
+* Transact-SQL (T-SQL)
 
-SQL Server Management Studio (SSMS)
+* SQL Server Management Studio (SSMS)
 
-Vscode
+* Vscode
 
-Python
+* Python
+
+* Git
+
+* Power BI
 
 # Estrutura do Repositório: sqlserver_administrator
 
