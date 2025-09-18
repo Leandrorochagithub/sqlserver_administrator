@@ -1,18 +1,9 @@
--- =============================================
--- Autor:        Leandro Ferreira
--- Data de Cria��o: 2025-09-01
--- Descri��o:    Cria um login e usu�rio para o projeto de Criptomoedas,
---               concedendo permiss�es m�nimas e espec�ficas
---               para as tarefas de ETL.
--- ATUALIZA��O:  Adicionada permiss�o de INSERT e UPDATE na tabela de moedas.
--- =============================================
-
 USE master;
 GO
 
--- 1. Cria o Login para a aplica��o de ETL do projeto Crypto
---    � uma boa pr�tica ter logins separados para projetos diferentes.
--- SELECT 1: � uma consulta b�sica, n�o precisamos gerar um estresse de consulta no banco usando *, por exemplo
+-- 1. Cria o Login para a aplição de ETL do projeto Crypto
+--    É uma boa prática ter logins separados para projetos diferentes.
+-- SELECT 1: É uma consulta básica, não precisamos gerar um estresse de consulta no banco usando *, por exemplo
 IF NOT EXISTS (SELECT 1 FROM sys.sql_logins WHERE name = 'app_etl_crypto')
 BEGIN
     CREATE LOGIN app_etl_crypto WITH PASSWORD = 'P@ssword';
@@ -23,33 +14,33 @@ GO
 USE CryptoDB;
 GO
 
--- 2. Cria o Usu�rio no banco de dados, associado ao Login
+-- 2. Cria o Usuário no banco de dados, associado ao Login
 IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name = 'app_etl_crypto')
 BEGIN
     CREATE USER app_etl_crypto FOR LOGIN app_etl_crypto;
 END
 GO
 
--- 3. Concede as permiss�es m�nimas e espec�ficas conforme sua an�lise
+-- 3. Concede as permissões mínimas e específicas conforme sua análise
 PRINT 'Concedendo permiss�es para o usu�rio app_etl_crypto...';
 
--- Permiss�o de LEITURA (SELECT), INSER��O (INSERT) e ATUALIZA��O (UPDATE) na tabela de moedas e na tabela de pre�o.
--- A aplica��o agora pode adicionar novas moedas � lista.
+-- Permissão de LEITURA (SELECT), INSERÇÃO (INSERT) e ATUALIZAÇÃO (UPDATE) na tabela de moedas e na tabela de preço.
+-- A aplicação agora pode adicionar novas moedas à lista.
 GRANT SELECT, INSERT, UPDATE ON dbo.coins TO app_etl_crypto;
-PRINT '- Permiss�es SELECT, INSERT, UPDATE concedidas em dbo.coins.';
+PRINT '- Permissões SELECT, INSERT, UPDATE concedidas em dbo.coins.';
 
 
 GRANT SELECT, INSERT, UPDATE ON dbo.price_history TO app_etl_crypto;
-PRINT '- Permiss�es SELECT, UPDATE concedidas em dbo.price_history.';
+PRINT '- Permissões SELECT, UPDATE concedidas em dbo.price_history.';
 
 -- Negando explicitamente permiss�es perigosas (opcional, mas boa pr�tica)
 DENY DELETE ON dbo.price_history TO app_etl_crypto;
 DENY DELETE ON dbo.coins TO app_etl_crypto;
 GO
 
-PRINT 'Modelo de seguran�a para o projeto Crypto atualizado com sucesso.';
 
--- 03/09/2025
+PRINT 'Modelo de segurança para o projeto Crypto atualizado com sucesso.';
+
 
 USE master
 GO

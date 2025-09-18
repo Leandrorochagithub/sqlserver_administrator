@@ -1,15 +1,3 @@
--- =============================================================================
--- Stored Procedure: dbo.usp_GetFailedLoginsReport
--- Autor:            Leandro Ferreira
--- Data de Criação:  2025-09-03
--- Descrição:        Coleta e sumariza as tentativas de login com falha
---                   em um determinado período de dias.
---
--- BOA PRÁTICA:      Este script garante que a procedure seja criada em um
---                   banco de dados dedicado para ferramentas de DBA.
--- ==============================================================================
-
-
 USE master;
 GO
 
