@@ -1,4 +1,4 @@
-# Portfólio de Administração de Banco de Dados SQL Server
+# Portfólio de Engenharia de Dados, Administração de Banco de Dados SQL Server e Análise de Dados
 
 Este repositório contém uma coleção de scripts e análises que demonstram as competências essenciais de um Administrador de Banco de Dados (DBA). O objetivo é aplicar os princípios de segurança, backup, manutenção e otimização de performance em um banco de dados de projeto.
 Estrutura do Projeto. O processo vai da extração dos dados de uma api pública, criação do Banco de Dados, sua alimentação, criação de Dashboard de Cryptos e Criação de Dasboard de manutenção do Banco de Dados. 
