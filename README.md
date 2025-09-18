@@ -3,7 +3,7 @@
 Este repositório contém uma coleção de scripts e análises que demonstram as competências essenciais de um Administrador de Banco de Dados (DBA). O objetivo é aplicar os princípios de segurança, backup, manutenção e otimização de performance em um banco de dados de projeto.
 Estrutura do Projeto.
 
-# ETL: Processo de carga de dados da API coingecko:
+# ETL: Processo de carga de dados da API Coingecko:
 
 **1. config.py: Configurações de ambiente e conexões:**
 
@@ -11,7 +11,7 @@ Estrutura do Projeto.
 <img width="973" height="308" alt="config_p2" src="https://github.com/user-attachments/assets/46047b3f-0fd3-4f43-8e2f-a8678f663af3" />
 
 
-**2. schema.sql: Script de construção de tabrlas no Banco de Dados:**
+**2. schema.sql: Script de construção de tabelas no Banco de Dados:**
 
 <img width="977" height="725" alt="schema" src="https://github.com/user-attachments/assets/2e88a41a-6316-4e7b-b248-9a89b26de8b3" />
 
@@ -39,19 +39,36 @@ Estrutura do Projeto.
 <img width="1182" height="471" alt="main_p7" src="https://github.com/user-attachments/assets/2316d472-9717-4dde-9759-50d3b82a056a" />
 
 
+# Banco de Dados: Sql Server
+
+## Está dividido em quatro áreas principais de responsabilidade de um DBA:
+
+**Segurança: Scripts para a criação de um modelo de segurança robusto, aplicando o princípio do menor privilégio.**
+
+**1. create_login_user_script.sql: Criação de Login (Nível instância) e Usuário (Nível Banco)**
+
+<img width="1335" height="913" alt="create_Login_p1" src="https://github.com/user-attachments/assets/0ae75f57-6a24-471b-b714-c288061ed78b" />
+<img width="1361" height="648" alt="create_Login_p2" src="https://github.com/user-attachments/assets/661bca6c-1cec-4675-9bfb-4c0d08d9a990" />
+<img width="1375" height="901" alt="create_Login_p3" src="https://github.com/user-attachments/assets/0c310f1e-618f-4b96-9be4-394fae971a9f" />
 
 
+**1.1. usp_get_failed_logins_report.sql: Stored Procedure para auditar tentativas mal sucedidas de login**
+
+<img width="1137" height="962" alt="audit login" src="https://github.com/user-attachments/assets/d1913982-4e5d-474c-9e04-5e67861fc27c" />
+<img width="1137" height="872" alt="audit login_02" src="https://github.com/user-attachments/assets/e34f1d00-21ae-4f4b-9687-d299b7ae1f78" />
 
 
+**1.2. Automação de execução do main_etl usando Task Schedule do Windows:**
+
+<img width="1790" height="1014" alt="task_schedule_01" src="https://github.com/user-attachments/assets/74655a26-d9a8-451b-909b-e86031cebe98" />
+<img width="1381" height="617" alt="task_schedule_02" src="https://github.com/user-attachments/assets/2ca2e92d-c185-4c33-a939-4366c96785c2" />
 
 
+**1.2.1. launcher.bat e deploy_and_run_etl: Arquivos criados para driblar erro de caminho longo no ambiente virtual Poetry**
 
+<img width="1627" height="305" alt="launcher bat" src="https://github.com/user-attachments/assets/964ce106-4a88-4d65-8bb8-dc111df7277e" />
+<img width="781" height="875" alt="launcher bat 2" src="https://github.com/user-attachments/assets/2a5b86a8-f7e7-4e8c-b5a7-b146edf1db2c" />
 
-
-
-# Este laboratório está dividido em quatro áreas principais de responsabilidade de um DBA:
-
-**Segurança:** Scripts para a criação de um modelo de segurança robusto, aplicando o princípio do menor privilégio.
 
 **Backup e Recuperação:** Estratégia de backup para garantir a recuperabilidade dos dados e minimizar a perda em caso de desastre (RPO/RTO).
 
