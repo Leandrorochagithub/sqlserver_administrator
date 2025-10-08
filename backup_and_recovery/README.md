@@ -25,4 +25,9 @@
 <br>
 
 **5. Plano automação de backups com Jobs dentro do Sql Server**
+<br>
+<br>
+<img width="478" height="163" alt="Captura de tela 2025-10-08 154643" src="https://github.com/user-attachments/assets/e9a0b087-3bb4-45ac-a83a-55c3c0ff1a3a" />
+
+
 
