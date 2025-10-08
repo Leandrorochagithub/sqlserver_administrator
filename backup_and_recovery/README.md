@@ -23,4 +23,6 @@
 <img width="1607" height="382" alt="RESTORE_P2" src="https://github.com/user-attachments/assets/d3ce8a71-c1c2-451e-a034-7e7b52e7e7ca" />
 <br>
 <br>
+
 **5. Plano automação de backups com Jobs dentro do Sql Server**
+
