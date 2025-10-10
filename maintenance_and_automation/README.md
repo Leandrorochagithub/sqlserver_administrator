@@ -20,3 +20,12 @@
 * 2º: Reconstruir Índices (Rebuild Index)
 * 3º: Atualizar Estatísticas (Update Statistics)
 * Frequência: Semanal, Domingos
+
+## Maintenance Plan:
+<br>
+<br>
+<img width="900" height="700" alt="Captura de tela 2025-10-10 145946" src="https://github.com/user-attachments/assets/3bb5450e-a22b-40c5-8990-9b47cfaf73df" />
+<br>
+<img width="900" height="700" alt="Captura de tela 2025-10-10 150210" src="https://github.com/user-attachments/assets/32feaf62-3347-4a91-9c6e-40a99bd5c94e" />
+
+
