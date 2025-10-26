@@ -33,32 +33,9 @@ Estratégia de backup implementada seguindo as melhores práticas para garantir 
 - Base para backups diferenciais e de log
 - Maior tempo de execução e espaço em disco
 
-**Frequência:** Semanal (Domingo às 02:00)
-
-**Localização:** `E:\Backups\Database\Full\`
+**Frequência:** Semanal (Domingo às 09:00)
 
 **Retenção:** 4 semanas (28 dias)
-
-**Como executar manualmente:**
-```sql
--- Backup completo do banco
-BACKUP DATABASE [NomeDoBanco]
-TO DISK = 'E:\Backups\Database\Full\NomeDoBanco_Full_20251026.bak'
-WITH 
-    COMPRESSION,
-    CHECKSUM,
-    STATS = 10,
-    DESCRIPTION = 'Backup Completo Semanal';
-GO
-
--- Verificar integridade do backup
-RESTORE VERIFYONLY 
-FROM DISK = 'E:\Backups\Database\Full\NomeDoBanco_Full_20251026.bak'
-WITH CHECKSUM;
-GO
-```
-
-**Tamanho médio:** ~15 GB comprimido
 
 ---
 
@@ -74,30 +51,9 @@ GO
 - Mais rápido que backup completo
 - Crescimento cumulativo durante a semana
 
-**Frequência:** Diário (Segunda a Sábado às 02:00)
-
-**Localização:** `E:\Backups\Database\Differential\`
+**Frequência:** Diário (Segunda a Sábado às 09:00)
 
 **Retenção:** 7 dias
-
-**Como executar manualmente:**
-```sql
--- Backup diferencial
-BACKUP DATABASE [NomeDoBanco]
-TO DISK = 'E:\Backups\Database\Differential\NomeDoBanco_Diff_20251026.bak'
-WITH 
-    DIFFERENTIAL,
-    COMPRESSION,
-    CHECKSUM,
-    STATS = 10,
-    DESCRIPTION = 'Backup Diferencial Diário';
-GO
-```
-
-**Tamanho médio:** 
-- Segunda-feira: ~2 GB
-- Sábado: ~8 GB (cumulativo)
-
 ---
 
 ### 3. Backup de Log de Transação (Transaction Log)
@@ -114,25 +70,7 @@ GO
 
 **Frequência:** A cada 15 minutos (24/7)
 
-**Localização:** `E:\Backups\Log\`
-
 **Retenção:** 48 horas
-
-**Como executar manualmente:**
-```sql
--- Backup de log de transação
-BACKUP LOG [NomeDoBanco]
-TO DISK = 'E:\Backups\Log\NomeDoBanco_Log_20251026_1430.trn'
-WITH 
-    COMPRESSION,
-    CHECKSUM,
-    STATS = 10,
-    DESCRIPTION = 'Backup de Log a cada 15 minutos';
-GO
-```
-
-**Tamanho médio:** ~200 MB por arquivo
-
 ---
 
 ## 📁 Estrutura de Diretórios
@@ -140,16 +78,15 @@ GO
 E:\Backups\
 ├── Database\
 │   ├── Full\              # Backups completos semanais
-│   │   ├── NomeDoBanco_Full_20251020.bak
-│   │   ├── NomeDoBanco_Full_20251013.bak
+│   │   ├── NomeDoBanco_Full_2025-10-20-082648.bak
 │   │   └── ...
 │   └── Differential\      # Backups diferenciais diários
-│       ├── NomeDoBanco_Diff_20251026.bak
-│       ├── NomeDoBanco_Diff_20251025.bak
+│       ├── NomeDoBanco_Diff_2025-10-26-080030.bak
+│       ├── NomeDoBanco_Diff_2025-10-25-080230.bak
 │       └── ...
 └── Log\                   # Backups de log (15 em 15 min)
-    ├── NomeDoBanco_Log_20251026_1430.trn
-    ├── NomeDoBanco_Log_20251026_1415.trn
+    ├── NomeDoBanco_Log_2025-10-26_143005.trn
+    ├── NomeDoBanco_Log_2025-10-26_141505.trn
     └── ...
 ```
 
@@ -163,7 +100,7 @@ E:\Backups\
 
 ### 4. Procedimento de Restore
 
-**Script:** `restore_database.sql`
+**Arquivo:** `restore_database.sql`
 
 **Cenários de Restauração:**
 
@@ -213,17 +150,10 @@ GO
 ```
 
 5. **Restaurar backup diferencial:**
-```sql
--- Restaurar último backup diferencial
-RESTORE DATABASE [NomeDoBanco]
-FROM DISK = 'E:\Backups\Database\Differential\NomeDoBanco_Diff_20251026.bak'
-WITH 
-    NORECOVERY,
-    STATS = 10;
-GO
-```
+6. 
+restore_database
 
-6. **Restaurar backups de log em sequência:**
+7. **Restaurar backups de log em sequência:**
 ```sql
 -- Restaurar todos os logs de transação desde o diferencial
 RESTORE LOG [NomeDoBanco]
@@ -562,6 +492,7 @@ WITH
 - [Best Practices for SQL Server Backup](https://www.brentozar.com/sql-server-backup-best-practices/)
 
 ---
+
 
 
 
