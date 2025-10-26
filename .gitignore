@@ -29,8 +29,6 @@ Thumbs.db
 # IMPORTANT: If your config.py contained real passwords, you would add 'config.py' here.
 # Since it only contains local server names, it's safe to share.
 data_engineering/schema/config.py
-road_map/SQLServer_Admin_Portfolio_Azure.gdoc
-road_map/SQLServer_Admin_Portfolio_On_Premisses.gdoc
 run_etl.bat
 data_engineering/
 .gitignore
