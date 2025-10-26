@@ -31,6 +31,6 @@ Thumbs.db
 data_engineering/schema/config.py
 road_map/SQLServer_Admin_Portfolio_Azure.gdoc
 road_map/SQLServer_Admin_Portfolio_On_Premisses.gdoc
-
 run_etl.bat
 data_engineering/
+.gitignore
