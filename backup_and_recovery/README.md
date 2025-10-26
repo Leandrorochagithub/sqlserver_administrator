@@ -115,62 +115,70 @@ E:\Backups\
 -- Verificar estado do banco
 SELECT name, state_desc, user_access_desc
 FROM sys.databases
-WHERE name = 'NomeDoBanco';
+WHERE name = 'CryptoDB';
 
 -- Executar DBCC para verificar consistência
-DBCC CHECKDB ('NomeDoBanco') WITH NO_INFOMSGS;
+DBCC CHECKDB ('CryptoDB') WITH NO_INFOMSGS;
 ```
 
 <img width="1800" height="600" alt="corrompimento" src="https://github.com/user-attachments/assets/80a37761-899c-44e0-a00b-958129403d02" />
+<br>
 <br>
 
 2. **Fazer backup de tail-log (se possível):**
 ```sql
 -- Backup do tail do log (últimas transações)
-BACKUP LOG [NomeDoBanco]
-TO DISK = 'E:\Backups\Log\NomeDoBanco_TailLog.trn'
+BACKUP LOG CryptoDB
+TO DISK = 'E:\Backups\Log\CryptoDB_TailLog.trn'
 WITH NO_TRUNCATE, NORECOVERY;
 ```
 
 3. **Colocar banco offline:**
 ```sql
-ALTER DATABASE [NomeDoBanco] SET OFFLINE WITH ROLLBACK IMMEDIATE;
+ALTER DATABASE CryptoDB SET OFFLINE WITH ROLLBACK IMMEDIATE;
 ```
 
 4. **Restaurar backup full:**
 ```sql
 -- Restaurar backup completo mais recente
-RESTORE DATABASE [NomeDoBanco]
-FROM DISK = 'E:\Backups\Database\Full\NomeDoBanco_Full_20251020.bak'
+RESTORE DATABASE CryptoDB
+FROM DISK = 'E:\Backups\Database\Full\CryptoDB_Full_20251020.bak'
 WITH 
-    NORECOVERY,  -- Permite aplicar mais backups
+    NORECOVERY,  -- Permite aplicar mais backups, sem finalizer o processo de restore
     REPLACE,      -- Sobrescreve banco existente
     STATS = 10;
 GO
 ```
 
 5. **Restaurar backup diferencial:**
-6. 
-restore_database
+ ```sql
+-- Restaurar último backup diferencial
+RESTORE DATABASE [NomeDoBanco]
+FROM DISK = 'E:\Backups\Database\Differential\NomeDoBanco_Diff_20251026.bak'
+WITH 
+    NORECOVERY,
+    STATS = 10;
+GO
+```
 
-7. **Restaurar backups de log em sequência:**
+6. **Restaurar backups de log em sequência:**
 ```sql
 -- Restaurar todos os logs de transação desde o diferencial
-RESTORE LOG [NomeDoBanco]
-FROM DISK = 'E:\Backups\Log\NomeDoBanco_Log_20251026_0800.trn'
+RESTORE LOG CryptoDB
+FROM DISK = 'E:\Backups\Log\CryptoDB_Log_20251026_0800.trn'
 WITH NORECOVERY;
 GO
 
-RESTORE LOG [NomeDoBanco]
-FROM DISK = 'E:\Backups\Log\NomeDoBanco_Log_20251026_0815.trn'
+RESTORE LOG CryptoDB
+FROM DISK = 'E:\Backups\Log\CryptoDB_Log_20251026_0815.trn'
 WITH NORECOVERY;
 GO
 
 -- ... continuar com todos os arquivos .trn ...
 
 -- Último log (tail-log) e finalizar restore
-RESTORE LOG [NomeDoBanco]
-FROM DISK = 'E:\Backups\Log\NomeDoBanco_TailLog.trn'
+RESTORE LOG CryptoDB
+FROM DISK = 'E:\Backups\Log\CryptoDB_TailLog.trn'
 WITH RECOVERY;  -- Finaliza e deixa banco online
 GO
 ```
@@ -178,17 +186,17 @@ GO
 7. **Verificar integridade após restore:**
 ```sql
 -- Verificar consistência do banco restaurado
-DBCC CHECKDB ('NomeDoBanco') WITH NO_INFOMSGS;
+DBCC CHECKDB ('CryptoDB') WITH NO_INFOMSGS;
 
 -- Verificar estado do banco
 SELECT name, state_desc, recovery_model_desc
 FROM sys.databases
-WHERE name = 'NomeDoBanco';
+WHERE name = 'CryptoDB';
 
 -- Testar consultas
-SELECT TOP 10 * FROM [NomeDoBanco].[dbo].[TabelaPrincipal];
+SELECT TOP 10 * FROM [CryptoDB].[dbo].[Coins];
 ```
-<img width="1607" height="382" alt="RESTORE_P2" src="https://github.com/user-attachments/assets/d3ce8a71-c1c2-451e-a034-7e7b52e7e7ca" />
+<img width="1800" height="400" alt="RESTORE_P2" src="https://github.com/user-attachments/assets/d3ce8a71-c1c2-451e-a034-7e7b52e7e7ca" />
 <img width="1800" height="600" alt="Captura de tela 2025-10-26 094458" src="https://github.com/user-attachments/assets/8ff3d022-4fb5-4643-8fcc-11ec4a5fb920" />
 
 #### 4.2. Restauração Point-in-Time
@@ -196,17 +204,17 @@ SELECT TOP 10 * FROM [NomeDoBanco].[dbo].[TabelaPrincipal];
 **Situação:** Reverter para um momento específico antes de erro humano/lógico (se necessário)
 ```sql
 -- Restaurar até momento específico (ex: antes de DELETE acidental)
-RESTORE DATABASE [NomeDoBanco]
-FROM DISK = 'E:\Backups\Database\Full\NomeDoBanco_Full_20251020.bak'
+RESTORE DATABASE CryptoDB
+FROM DISK = 'E:\Backups\Database\Full\CryptoDB_Full_20251020.bak'
 WITH NORECOVERY, REPLACE;
 
-RESTORE DATABASE [NomeDoBanco]
-FROM DISK = 'E:\Backups\Database\Differential\NomeDoBanco_Diff_20251026.bak'
+RESTORE DATABASE CryptoDB
+FROM DISK = 'E:\Backups\Database\Differential\CryptoDB_Diff_20251026.bak'
 WITH NORECOVERY;
 
 -- Restaurar logs até horário específico
-RESTORE LOG [NomeDoBanco]
-FROM DISK = 'E:\Backups\Log\NomeDoBanco_Log_20251026_1400.trn'
+RESTORE LOG CryptoDB
+FROM DISK = 'E:\Backups\Log\CryptoDB_Log_20251026_1400.trn'
 WITH RECOVERY, STOPAT = '2025-10-26 14:25:00';
 GO
 ```
@@ -225,7 +233,7 @@ GO
 
 **Nome:** `DBA - Backup Full Semanal`
 
-**Schedule:** Domingo, 02:00
+**Schedule:** Domingo, 09:00
 
 **Passos:**
 1. Verificar espaço em disco (> 50 GB livre)
@@ -255,10 +263,10 @@ EXEC msdb.dbo.sp_add_jobstep
 
 EXEC msdb.dbo.sp_add_jobschedule
     @job_name = N'DBA - Backup Full Semanal',
-    @name = N'Semanal_Domingo_02h',
+    @name = N'Semanal_Domingo_09h',
     @freq_type = 8,  -- Semanal
     @freq_interval = 1,  -- Domingo
-    @active_start_time = 020000;  -- 02:00:00
+    @active_start_time = 090000;  -- 09:00:00
 GO
 ```
 
@@ -266,7 +274,7 @@ GO
 
 **Nome:** `DBA - Backup Diferencial Diário`
 
-**Schedule:** Segunda a Sábado, 02:00
+**Schedule:** Segunda a Sábado, 09:00
 
 **Exemplo de código do Job:**
 ```sql
@@ -280,10 +288,10 @@ EXEC msdb.dbo.sp_add_jobstep
 
 EXEC msdb.dbo.sp_add_jobschedule
     @job_name = N'DBA - Backup Diferencial Diário',
-    @name = N'Diario_SegASab_02h',
+    @name = N'Diario_SegASab_09h',
     @freq_type = 8,  -- Semanal
     @freq_interval = 126,  -- Seg a Sáb (2+4+8+16+32+64)
-    @active_start_time = 020000;
+    @active_start_time = 090000;
 GO
 ```
 
@@ -329,65 +337,15 @@ GO
 ## 📊 Monitoramento e Validação
 
 ### Verificar Histórico de Backups
-```sql
--- Últimos backups realizados
-SELECT 
-    database_name,
-    type,
-    CASE type
-        WHEN 'D' THEN 'Full'
-        WHEN 'I' THEN 'Differential'
-        WHEN 'L' THEN 'Log'
-    END AS backup_type,
-    backup_start_date,
-    backup_finish_date,
-    DATEDIFF(MINUTE, backup_start_date, backup_finish_date) AS duration_minutes,
-    CAST(backup_size / 1024.0 / 1024.0 / 1024.0 AS DECIMAL(10,2)) AS size_gb,
-    CAST(compressed_backup_size / 1024.0 / 1024.0 / 1024.0 AS DECIMAL(10,2)) AS compressed_size_gb,
-    physical_device_name
-FROM msdb.dbo.backupset bs
-JOIN msdb.dbo.backupmediafamily bmf ON bs.media_set_id = bmf.media_set_id
-WHERE database_name = 'NomeDoBanco'
-    AND backup_start_date >= DATEADD(DAY, -7, GETDATE())
-ORDER BY backup_start_date DESC;
-```
+
+**Arquivo:** `audit_backups_history.sql`
+
+<img width="1800" height="400" alt="Captura de tela 2025-10-26 163548" src="https://github.com/user-attachments/assets/d9bc82ce-c0be-4439-87e5-32125ed19aa4" />
 
 ### Dashboard de Monitoramento
-```sql
--- Status geral dos backups
-WITH LastBackups AS (
-    SELECT 
-        database_name,
-        type,
-        MAX(backup_finish_date) AS last_backup_date,
-        MAX(backup_size) AS last_size
-    FROM msdb.dbo.backupset
-    WHERE backup_finish_date >= DATEADD(DAY, -30, GETDATE())
-    GROUP BY database_name, type
-)
-SELECT 
-    d.name AS database_name,
-    d.recovery_model_desc,
-    lb_full.last_backup_date AS last_full_backup,
-    DATEDIFF(DAY, lb_full.last_backup_date, GETDATE()) AS days_since_full,
-    lb_diff.last_backup_date AS last_diff_backup,
-    DATEDIFF(HOUR, lb_diff.last_backup_date, GETDATE()) AS hours_since_diff,
-    lb_log.last_backup_date AS last_log_backup,
-    DATEDIFF(MINUTE, lb_log.last_backup_date, GETDATE()) AS minutes_since_log,
-    CASE 
-        WHEN lb_full.last_backup_date IS NULL THEN 'B_CRÍTICO'
-        WHEN DATEDIFF(DAY, lb_full.last_backup_date, GETDATE()) > 7 THEN 'B_ATENÇÃO'
-        WHEN lb_log.last_backup_date IS NULL THEN 'L_CRÍTICO'
-        WHEN DATEDIFF(MINUTE, lb_log.last_backup_date, GETDATE()) > 30 THEN 'L_ATENÇÃO'
-        ELSE 'OK'
-    END AS status
-FROM sys.databases d
-LEFT JOIN LastBackups lb_full ON d.name = lb_full.database_name AND lb_full.type = 'D'
-LEFT JOIN LastBackups lb_diff ON d.name = lb_diff.database_name AND lb_diff.type = 'I'
-LEFT JOIN LastBackups lb_log ON d.name = lb_log.database_name AND lb_log.type = 'L'
-WHERE d.database_id > 4  -- Excluir bancos de sistema
-ORDER BY d.name;
-```
+
+**Arquivo:** `audit_backup_monitoring.sql`
+
 <img width="1800" height="300" alt="Captura de tela 2025-10-26 101024" src="https://github.com/user-attachments/assets/c952e346-0d8f-4fcb-8564-c51bfc4f71aa" />
 
 ### Testar Restauração (Drill Test)
@@ -416,13 +374,13 @@ ORDER BY d.name;
 -- Verificar modelo de recuperação
 SELECT name, recovery_model_desc 
 FROM sys.databases 
-WHERE name = 'NomeDoBanco';
+WHERE name = 'CryptoDB';
 
 -- Se SIMPLE, alterar para FULL
-ALTER DATABASE [NomeDoBanco] SET RECOVERY FULL;
+ALTER DATABASE CryptoDB SET RECOVERY FULL;
 
 -- Executar backup full antes do log
-BACKUP DATABASE [NomeDoBanco] TO DISK = '...';
+BACKUP DATABASE CryptoDB TO DISK = '...';
 ```
 
 ### Problema: Espaço insuficiente
@@ -447,7 +405,7 @@ EXEC xp_fixeddrives;  -- Espaço livre em cada drive
 4. Usar múltiplos arquivos de backup
 ```sql
 -- Backup com otimização
-BACKUP DATABASE [NomeDoBanco]
+BACKUP DATABASE CryptoDB
 TO DISK = 'E:\Backups\File1.bak',
    DISK = 'E:\Backups\File2.bak',
    DISK = 'E:\Backups\File3.bak'
@@ -490,12 +448,3 @@ WITH
 - [SQL Server Backup and Restore - Microsoft Docs](https://docs.microsoft.com/sql/relational-databases/backup-restore/)
 - [Recovery Models - Microsoft Docs](https://docs.microsoft.com/sql/relational-databases/backup-restore/recovery-models-sql-server)
 - [Best Practices for SQL Server Backup](https://www.brentozar.com/sql-server-backup-best-practices/)
-
----
-
-
-
-
-
-
-
