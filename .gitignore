@@ -1,34 +1,50 @@
-# Ambientes Virtuais (Poetry, venv, etc.)
-# Virtual Environments (Poetry, venv, etc.)
+# =============================================
+# Ambientes Virtuais / Virtual Environments
+# =============================================
 .venv
 venv/
 .env
 /env/
+
+# =============================================
+# Cache do Python / Python Cache
+# =============================================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Ficheiros de cache do VSCode
-# VSCode cache files
+# =============================================
+# IDE e Editores / IDEs and Editors
+# =============================================
 .vscode/
 
-# Ficheiros de sistema do SO
-# OS system files
+# =============================================
+# Arquivos de Sistema / System Files
+# =============================================
 .DS_Store
 Thumbs.db
 
-# Ficheiros de backup de API (se decidir não os partilhar)
-# API backup files (if you decide not to share them)
+# =============================================
+# Backup de API / API Backups
+# =============================================
 # 1_data_engineering/2_main_etl/api_responses/
 
-# Ficheiro de configuração
-# Configuration file
-# IMPORTANTE: Se o seu config.py contivesse senhas reais, você adicionaria 'config.py' aqui.
-# Como ele contém apenas nomes de servidores locais, é seguro partilhá-lo.
-# IMPORTANT: If your config.py contained real passwords, you would add 'config.py' here.
-# Since it only contains local server names, it's safe to share.
+# =============================================
+# Configuração e Execução / Configuration & Execution
+# =============================================
+# IMPORTANTE: config.py contém apenas nomes de servidores locais
+# IMPORTANT: config.py only contains local server names
 data_engineering/schema/config.py
 run_etl.bat
+
+# =============================================
+# Documentação / Documentation
+# =============================================
+road_map/SQLServer_Admin_Portfolio_Azure.gdoc
+road_map/SQLServer_Admin_Portfolio_On_Premisses.gdoc
+
+# =============================================
+# ETL e Data Engineering
+# =============================================
 data_engineering/
-.gitignore
