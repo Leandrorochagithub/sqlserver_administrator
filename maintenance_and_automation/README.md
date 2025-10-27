@@ -136,7 +136,7 @@ WITH (
 
 #### Script de Análise de Fragmentação
 
-**Arquivo**: `audit_dbfragmentation.sql`
+**Arquivo**: `audit_fragmentacao_db.sql`
 
 <img width="1800" height="300" alt="Captura de tela 2025-10-26 170748" src="https://github.com/user-attachments/assets/86602fa3-602d-4b30-81e6-c38ba95b6cee" />
 
@@ -184,7 +184,7 @@ EXEC sp_updatestats;
 
 #### Script de Verificação
 
-**Arquivo:** `audit_statistics.sql`
+**Arquivo:** `audit_statisticas.sql`
 
 <img width="1800" height="500" alt="Captura de tela 2025-10-26 171154" src="https://github.com/user-attachments/assets/1ef6be6d-d8bd-4b00-862f-81bf66471fb1" />
 
@@ -388,7 +388,7 @@ EXEC sp_addrolemember @rolename = 'SQLAgentOperatorRole',
 
 ### KPIs de Manutenção
 
-**Arquivo:** `audit_maintenance_kpi.sql`
+**Arquivo:** `audit_kpi_de_manutencao`
 
 <img width="1800" height="300" alt="Captura de tela 2025-10-26 174103" src="https://github.com/user-attachments/assets/8dfa714c-c6be-42a5-8143-cda4259b7405" />
 
