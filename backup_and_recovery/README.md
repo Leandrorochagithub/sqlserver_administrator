@@ -338,13 +338,13 @@ GO
 
 ### Verificar Histórico de Backups
 
-**Arquivo:** `audit_backups_history.sql`
+**Arquivo:** `audit_historico_backup.sql`
 
 <img width="1800" height="400" alt="Captura de tela 2025-10-26 163548" src="https://github.com/user-attachments/assets/d9bc82ce-c0be-4439-87e5-32125ed19aa4" />
 
 ### Dashboard de Monitoramento
 
-**Arquivo:** `audit_backup_monitoring.sql`
+**Arquivo:** `audit_monitoramento_backup.sql`
 
 <img width="1800" height="300" alt="Captura de tela 2025-10-26 101024" src="https://github.com/user-attachments/assets/c952e346-0d8f-4fcb-8564-c51bfc4f71aa" />
 
@@ -448,3 +448,4 @@ WITH
 - [SQL Server Backup and Restore - Microsoft Docs](https://docs.microsoft.com/sql/relational-databases/backup-restore/)
 - [Recovery Models - Microsoft Docs](https://docs.microsoft.com/sql/relational-databases/backup-restore/recovery-models-sql-server)
 - [Best Practices for SQL Server Backup](https://www.brentozar.com/sql-server-backup-best-practices/)
+
