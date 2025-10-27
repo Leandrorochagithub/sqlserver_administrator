@@ -47,7 +47,7 @@ Conexão → Autenticação (Login) → Autorização (Usuário) → Permissões
 
 #### 1.1. Usuário de Serviço: ETL (Leitura/Escrita)
 
-**Arquivo:** `create_serv_user.sql`
+**Arquivo:** `create_login_e_user_de_servico.sql`
 
 **Nome:** `app_etl_crypto`
 
@@ -67,7 +67,7 @@ Conexão → Autenticação (Login) → Autorização (Usuário) → Permissões
 
 #### 1.2. Usuário: Somente Leitura (Read-Only)
 
-**Arquivo:** `create_usr_user.sql`
+**Arquivo:** `create_login_e_user_de_usuario.sql`
 
 **Nome:** `usr_crypto_ro`
 
@@ -92,13 +92,13 @@ Conexão → Autenticação (Login) → Autorização (Usuário) → Permissões
 
 #### Verificar Criação de Logins e Usuários no Banco
 
-**Arquivo:** `audit-instance_database_login.sql`
+**Arquivo:** `audit_criacao_login_e_usuario.sql`
 
 <img width="1800" height="500" alt="Captura de tela 2025-10-26 111106" src="https://github.com/user-attachments/assets/329a854f-0d35-42ef-95bb-bea673de61fc" />
 
 #### Auditar Permissões Concedidas
 
-**Arquivo:** `audit-database_permissions.sql`
+**Arquivo:** `audit_permissoes_concedidas.sql`
 
 **Resultado esperado:**
 
@@ -107,7 +107,7 @@ Conexão → Autenticação (Login) → Autorização (Usuário) → Permissões
 
 #### Testar Permissões
 
-**Arquivo:** `permission_test.sql`
+**Arquivo:** `audit_teste_de_permissoes.sql`
 
 <img width="1800" height="500" alt="Captura de tela 2025-10-26 134805" src="https://github.com/user-attachments/assets/0f920a3f-b73c-4020-baad-dd6595b328b5" />
 
@@ -173,7 +173,7 @@ WITH PASSWORD = N'$(PASSWORD)',
 
 #### 3. **Rotação de Credenciais**
 
-**Arquivo:** `audit_last_pwd_change.sql`
+**Arquivo:** `audit_rotacao_de_credenciais.sql`
 
 <img width="1800" height="600" alt="Captura de tela 2025-10-26 135532" src="https://github.com/user-attachments/assets/20172d93-388a-4d60-b1e9-006cfe4a1942" />
 
