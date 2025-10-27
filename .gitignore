@@ -28,14 +28,14 @@ Thumbs.db
 # =============================================
 # Backup de API / API Backups
 # =============================================
-# 1_data_engineering/2_main_etl/api_responses/
+# engenharia_de_dados/main_etl/api_responses/
 
 # =============================================
 # Configuração e Execução / Configuration & Execution
 # =============================================
 # IMPORTANTE: config.py contém apenas nomes de servidores locais
 # IMPORTANT: config.py only contains local server names
-data_engineering/schema/config.py
+engenharia_de_dados/schema/config.py
 run_etl.bat
 
 # =============================================
@@ -47,4 +47,4 @@ road_map/SQLServer_Admin_Portfolio_On_Premisses.gdoc
 # =============================================
 # ETL e Data Engineering
 # =============================================
-data_engineering/
+engenharia_de_dados/
